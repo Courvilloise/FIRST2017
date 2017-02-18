@@ -54,7 +54,7 @@
 #define CATAPULT_BUTTON_STOP_SPEED				(POV_GAUCHE)
 
 #define CATAPULT_AGITATOR_SPEED					(0.3f)
-#define CATAPULT_DEFAULT_RESTORE_SAVED_SPEED	(0.5f)
+#define CATAPULT_DEFAULT_RESTORE_SAVED_SPEED	(0.85f)
 #define CATAPULT_INCREASE_SPEED_DELTA			(0.01f)
 
 /////////////////////////////////////////////////////////////////////////////////
