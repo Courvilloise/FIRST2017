@@ -175,6 +175,7 @@ void GamePadDrive::UpdateGearGate()
 	{
 		btnToggleGatePressed = false;
 	}
+	(Robot::geargate.get())->Update();
 }
 
 // If the user wants to record a sequence of actions
