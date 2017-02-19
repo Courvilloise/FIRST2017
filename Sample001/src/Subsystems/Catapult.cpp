@@ -45,22 +45,21 @@ void Catapult::InitDefaultCommand() {
 }
 
 // Specify the speed of the motor that throw balls. Range between 0.0 to 1.0
-void Catapult::SetRotationSpeed(double speed)
+void Catapult::SetRotationSpeed(double ballSpeed, double agitatorSpeed)
 {
 	// Make sur the value are in a valid range
-	if (speed < 0.0f)
-		speed = 0.0f;
-	else if (speed > 1.0f)
-		speed = 1.0f;
+	if (ballSpeed < 0.0f)
+		ballSpeed = 0.0f;
+	else if (ballSpeed > 1.0f)
+		ballSpeed = 1.0f;
 
-	// We multiply by -1.0f to have the motor throwing on the right direction
-	cAN1ThrowEngine->Set(speed);
-	currentSpeed = speed;
+	cAN1ThrowEngine->Set(ballSpeed);
+	currentSpeed = ballSpeed;
 
 	// If we have enough speed, we should start the agitator;
 	if (std::abs(currentSpeed) > 0.01)
 	{
-		pMW4AgitatorEngine->Set(0.3);
+		pMW4AgitatorEngine->Set(agitatorSpeed);
 	}
 	else
 	{

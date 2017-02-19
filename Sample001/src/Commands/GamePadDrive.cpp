@@ -121,7 +121,11 @@ void GamePadDrive::UpdateCatapult()
 	// If the user press up it will increase the speed of the catapult
 	if (povValue == CATAPULT_BUTTON_INCREASE_SPEED)
 	{
-		(Robot::catapult.get())->IncreaseSpeed(CATAPULT_INCREASE_SPEED_DELTA);
+		// The first increment will jump directly to the restore saved speed
+		if ((Robot::catapult.get())->GetCurrentSpeed() == 0.0)
+			(Robot::catapult.get())->RestoreSavedSpeed();
+		else
+			(Robot::catapult.get())->IncreaseSpeed(CATAPULT_INCREASE_SPEED_DELTA);
 		return;
 	}
 
