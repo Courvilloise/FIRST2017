@@ -51,7 +51,7 @@ public:
 	// Save the current speed
 	void SaveCurrentSpeed();
 	// Restore the speed with the previous value.
-	void RestoreSavedSpeed(double defaultSpeed=CATAPULT_DEFAULT_RESTORE_SAVED_SPEED);
+	void RestoreSavedSpeed(double defaultSpeed=CATAPULT_DEFAULT_START_SPEED);
 	// Get the current speed
 	double GetCurrentSpeed()
 	{

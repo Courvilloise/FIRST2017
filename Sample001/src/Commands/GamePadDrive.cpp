@@ -139,22 +139,9 @@ void GamePadDrive::UpdateCatapult()
 	// If the user press on left it will stop the catapult
 	if (povValue == CATAPULT_BUTTON_STOP_SPEED)
 	{
+		(Robot::catapult.get())->SaveCurrentSpeed();
 		(Robot::catapult.get())->Stop();
 		return;
-	}
-
-	// If the user press on right it will restore the previous saved value
-	if (povValue == CATAPULT_BUTTON_RESTORE_SPEED)
-	{
-		// If no previous saved value, the catapult will take a default value we set
-		(Robot::catapult.get())->RestoreSavedSpeed(CATAPULT_DEFAULT_RESTORE_SAVED_SPEED);
-		return;
-	}
-
-	// If the user press on the share button, it will save the current speed
-	if (pJoystick->GetRawButton(CATAPULT_BUTTON_RECORD_SPEED))
-	{
-		(Robot::catapult.get())->SaveCurrentSpeed();
 	}
 }
 
