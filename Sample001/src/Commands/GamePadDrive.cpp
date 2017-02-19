@@ -98,11 +98,13 @@ void GamePadDrive::UpdateVehicle()
 		// Apply the speed on the vehicle
 		(Robot::vehicle.get())->Move(realSpeed * leftSpeedCoef, realSpeed * rightSpeedCoef);
 	}
-	// If the user wants to turn its vehicle on itself
+	// If the user wants to turn its vehicle on itself (autorotation)
 	else if (std::abs(direction) > VEHICLE_MINIMUM_ANGLE_FOR_AUTORATION)
 	{
+		// As a linear interpolation triggers a very fast auto-rotation, we use a square approach
+		double autorotationSpeed = direction * direction * -1.0f;
 		// Apply the speed on the vehicle
-		(Robot::vehicle.get())->Move(direction, -1.0f * direction);
+		(Robot::vehicle.get())->Move(autorotationSpeed, -1.0f * autorotationSpeed);
 	}
 	else // If no turn, not move forward, we stop!
 	{
