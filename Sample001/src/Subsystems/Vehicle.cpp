@@ -42,10 +42,19 @@ void Vehicle::InitDefaultCommand() {
 
 void Vehicle::Stop()
 {
-	pMW0LeftEngine->Set(0.0);
-	pMW2LeftEngine->Set(0.0);
-	pMW3RightEngine->Set(0.0);
-	pMW1RightEngine->Set(0.0);
+	pMW0LeftEngine->Set(0.0f);
+	pMW2LeftEngine->Set(0.0f);
+	pMW3RightEngine->Set(0.0f);
+	pMW1RightEngine->Set(0.0f);
+
+	// Will record the new values of the speeds if different than previous values..
+	if ((currentLeftSpeed != 0.0f) ||
+	    (currentRightSpeed != 0.0f))
+	{
+		currentLeftSpeed = 0.0f;
+	    currentRightSpeed = 0.0f;
+		ActionsRecorder::GetInstance()->RecordCommand(FUNC_VEHICLE_STOP, currentLeftSpeed, currentRightSpeed);
+	}
 }
 
 // The vehicle will move
@@ -75,8 +84,16 @@ void Vehicle::Move(double leftSpeed, double rightSpeed)
 	// Set the power on the second pair engines
 	pMW1RightEngine->Set(rightSpeed);
 	pMW3RightEngine->Set(rightSpeed);
+
+	// Will record the new values of the speeds if different than previous values..
+	if ((leftSpeed != currentLeftSpeed) ||
+	    (rightSpeed != currentRightSpeed))
+	{
+		currentLeftSpeed = leftSpeed;
+		currentRightSpeed = rightSpeed;
+
+		ActionsRecorder::GetInstance()->RecordCommand(FUNC_VEHICLE_MOVE, currentLeftSpeed, currentRightSpeed);
+	}
 }
 
-// Put methods for controlling this subsystem
-// here. Call these from Commands.
 

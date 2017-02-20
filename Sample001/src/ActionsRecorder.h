@@ -10,21 +10,43 @@
 #include <string>
 #include <list>
 #include <memory>
+
+using namespace std;
+
+
 class ActionsRecorder;
+class Record;
 
 class Record
 {
 public:
-	Record(long tick, std::string func) : tickCounter(tick), funcName(func){}
-	Record(long tick, std::string func, double val1, double val2) : tickCounter(tick), funcName(func), double1(val1), double2(val2){}
+	Record() : updateCounter(0), funcID(0), double1(0.0f), double2(0.0f){}
 
-	long tickCounter;
-	std::string funcName;
+	Record(const Record& other)
+	{
+		updateCounter = other.updateCounter;
+		funcID = other.funcID;
+		double1 = other.double1;
+		double2 = other.double2;
+	}
+
+	Record(long tick, unsigned int ID) : updateCounter(tick), funcID(ID){}
+	Record(long tick, unsigned int ID, double val1, double val2) : updateCounter(tick), funcID(ID), double1(val1), double2(val2){}
+	~Record ()
+	{
+		cout << "Record::Destructor" << endl;
+	}
+
+	unsigned long updateCounter;
+	unsigned int funcID;
 	double double1;
 	double double2;
 };
 
 class ActionsRecorder {
+public:
+	enum recorderMode {recordInProgress, playInProgress, disabled};
+
 private:
 	// To block all new instance! It's a singleton
 	ActionsRecorder();
@@ -32,12 +54,17 @@ private:
 	ActionsRecorder(ActionsRecorder const&); // Don't Implement
     void operator=(ActionsRecorder const&);  // Don't implement
 
-    // Count the tick from a start record to a stop record
-    unsigned long tickCounter;
+    void PlaySpecificRecord(const Record* pRecord);
+
+    // Count the update from a start record to a stop record
+    unsigned long updateCounter;
     // To know the current status of the instance
-    bool recordInProgress;
+    recorderMode recorderStatus;
+
     // To store all calls made during a record session
     std::list<std::shared_ptr<Record>> recordList;
+    // To iterate through the list and replay the actions
+    std::list<std::shared_ptr<Record>>::iterator itList;
 
 public:
 	virtual ~ActionsRecorder();
@@ -49,27 +76,24 @@ public:
 		return &singletonInstance;
 	}
 
-	// Clear all command recorded;
-	void Clear();
-
-	// Increment the tick;
-	void Tick()
-	{
-		tickCounter++;
-	}
-
-	// Record a sequence
 	void StartRecord();
-	// Stop the record
 	void StopRecord();
-	// To know if a record is in progress
-	bool RecordInProgress()
-	{
-		return recordInProgress;
-	}
+	void StartPlay();
+	void StopPlay();
+	void Clear();										// Clear all commands recorded;
+	void Update();
+	long GetUpdateCounter(){return updateCounter;}
+	recorderMode GetStatus(){return recorderStatus;}	// Get current status
 
-	void RecordCommand(std::string& funcName);
-	void RecordCommand(std::string& funcName, double val1, double val2);
+	bool SaveFile(const char* fileName);						// To save the record sequence in a file
+	bool LoadFile(const char* fileName);						// To reload the record squenec from a file
+
+	Record* GetCurrentAction();
+	void IterateNextAction();
+
+	// Used to record calls
+	void RecordCommand(unsigned int funcID);
+	void RecordCommand(unsigned int funcID, double val1, double val2);
 };
 
 #endif /* SRC_ACTIONSRECORDER_H_ */

@@ -70,8 +70,12 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 // ABOUT THE RECORDER
-#define RECORDER_START_RECORD					(BOUTON_OPTION)
-#define RECORDER_STOP_RECORD					(BOUTON_X)
-#define RECORDER_REPLAY_RECORD					(BOUTON_CARRE)
+#define RECORDER_START_STOP_RECORD				(BOUTON_OPTION)
+#define RECORDER_START_STOP_PLAY				(BOUTON_PLAYSTATION)
+
+#define FUNC_VEHICLE_MOVE						(1)
+#define FUNC_VEHICLE_STOP						(2)
+
+
 
 #endif /* SRC_DEFINITIONS_H_ */
