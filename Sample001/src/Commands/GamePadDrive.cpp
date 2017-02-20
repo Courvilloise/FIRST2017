@@ -21,6 +21,7 @@ GamePadDrive::GamePadDrive(): Command() {
 	btnTooggleRecordPressed = false;
 	btnTooglePlayPressed = false;
 	btnToggleGatePressed = false;
+	btnToggleWinchBreakPressed = false;
 	posGearGate = Geargate::openGate;
 
 	pActionsRecorder = ActionsRecorder::GetInstance();
@@ -130,7 +131,7 @@ void GamePadDrive::UpdateCatapult()
 	if (povValue == CATAPULT_BUTTON_INCREASE_SPEED)
 	{
 		// The first increment will jump directly to the restore saved speed
-		if ((Robot::catapult.get())->GetCurrentSpeed() == 0.0)
+		if ((Robot::catapult.get())->GetCurrentBallSpeed() == 0.0)
 			(Robot::catapult.get())->RestoreSavedSpeed();
 		else
 			(Robot::catapult.get())->IncreaseSpeed(CATAPULT_INCREASE_SPEED_DELTA);
@@ -157,8 +158,18 @@ void GamePadDrive::UpdateWinch()
 {
 	// Get the speed of the winch and its direction (between -1.0 (full left) to +1.0 (full right))
 	double direction = pJoystick->GetRawAxis(WINCH_DIRECTION);
-
 	(Robot::winch.get())->Move(direction);
+
+
+	if (!btnToggleWinchBreakPressed && pJoystick->GetRawButton(WINCH_BREAK))
+	{
+		(Robot::winch.get())->Break();
+		btnToggleWinchBreakPressed = true;
+	}
+	else if (btnToggleWinchBreakPressed && !pJoystick->GetRawButton(WINCH_BREAK))
+	{
+		btnToggleWinchBreakPressed = false;
+	}
 }
 
 void GamePadDrive::UpdateGearGate()

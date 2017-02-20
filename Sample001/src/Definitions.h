@@ -51,7 +51,7 @@
 #define CATAPULT_BUTTON_DESCREASE_SPEED			(POV_BAS)
 #define CATAPULT_BUTTON_STOP_SPEED				(POV_GAUCHE)
 
-#define CATAPULT_AGITATOR_SPEED					(0.3f)
+#define CATAPULT_AGITATOR_SPEED					(0.5f)
 #define CATAPULT_DEFAULT_START_SPEED			(0.85f)
 #define CATAPULT_INCREASE_SPEED_DELTA			(0.01f)
 
@@ -67,6 +67,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 // ANOUT THE WINCH
 #define WINCH_DIRECTION							(THUMBSTICK_RIGHT_VERTICAL)
+#define WINCH_BREAK								(BOUTON_CARRE)
 
 /////////////////////////////////////////////////////////////////////////////////
 // ABOUT THE RECORDER
@@ -75,7 +76,7 @@
 
 #define FUNC_VEHICLE_MOVE						(1)
 #define FUNC_VEHICLE_STOP						(2)
-
-
+#define FUNC_CATAPULT_SETROTATIONSPEED			(3)
+#define FUNC_CATAPULT_STOP						(4)
 
 #endif /* SRC_DEFINITIONS_H_ */

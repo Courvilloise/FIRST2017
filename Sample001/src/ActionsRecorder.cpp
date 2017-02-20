@@ -215,6 +215,15 @@ void ActionsRecorder::PlaySpecificRecord(const Record* pRecord)
 	case FUNC_VEHICLE_STOP:
 		(Robot::vehicle.get())->Stop();
 		break;
+
+	case FUNC_CATAPULT_SETROTATIONSPEED:
+		(Robot::catapult.get())->SetRotationSpeed(pRecord->double1, pRecord->double2);
+		break;
+
+	case FUNC_CATAPULT_STOP:
+		(Robot::catapult.get())->Stop();
+		break;
+
 	}
 
 }

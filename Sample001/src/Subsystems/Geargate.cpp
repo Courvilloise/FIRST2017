@@ -44,23 +44,26 @@ void Geargate::InitDefaultCommand() {
 void Geargate::SetGatePosition(gatePosition Position)
 {
 	currentPosition = Position;
-
-	if ((Position == Geargate::openGate) && !d0LimitOpenSwitch->Get())
-	{
-		pMW7GateEngine->Set(-0.75f);
-	}
-	else if ((Position == Geargate::closeGate) && !d1LimitCloseSwitch->Get())
-	{
-		pMW7GateEngine->Set(0.75f);
-	}
 }
 
 // Will stop the engin when an end course contact is reached
 void Geargate::Update()
 {
-	if (((currentPosition == Geargate::openGate) && d0LimitOpenSwitch->Get()) ||
-		((currentPosition == Geargate::closeGate) && d1LimitCloseSwitch->Get()) ||
-		(currentPosition == Geargate::notDefined))
+	if (currentPosition == Geargate::openGate)
+	{
+		if (!d0LimitOpenSwitch->Get())
+			pMW7GateEngine->Set(-0.75f);
+		else
+			pMW7GateEngine->Set(0.0f);
+	}
+	else if (currentPosition == Geargate::closeGate)
+	{
+		if (!d1LimitCloseSwitch->Get())
+			pMW7GateEngine->Set(0.75f);
+		else
+			pMW7GateEngine->Set(0.0f);
+	}
+	else
 	{
 		pMW7GateEngine->Set(0.0f);
 	}
