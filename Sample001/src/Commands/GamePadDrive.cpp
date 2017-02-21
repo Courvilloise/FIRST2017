@@ -122,7 +122,7 @@ void GamePadDrive::UpdateVehicle()
 	else if (std::abs(direction) > VEHICLE_MINIMUM_ANGLE_FOR_AUTORATION)
 	{
 		// As a linear interpolation triggers a very fast auto-rotation, we use a square approach
-		double autorotationSpeed = direction * direction * -1.0f;
+		double autorotationSpeed = direction * direction;
 		// Apply the speed on the vehicle
 		(Robot::vehicle.get())->Move(autorotationSpeed, -1.0f * autorotationSpeed);
 	}
