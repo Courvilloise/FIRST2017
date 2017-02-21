@@ -25,16 +25,23 @@ AutonomousCommand::AutonomousCommand(): Command() {
 // Called just before this Command runs the first time
 void AutonomousCommand::Initialize() {
 
+	pActionsRecorder = ActionsRecorder::GetInstance();
+	pActionsRecorder->Clear();
+	pActionsRecorder->LoadFile(RECORDER_FILE_NAME);
+	pActionsRecorder->StartAutonoumous();
 }
 
 // Called repeatedly when this Command is scheduled to run
 void AutonomousCommand::Execute() {
 
+	// Necessary to operate the player in the AutonoumousUpdate
+	pActionsRecorder->AutonoumousUpdate();
+	(Robot::geargate.get())->Update();
 }
 
 // Make this return true when this Command no longer needs to run execute()
 bool AutonomousCommand::IsFinished() {
-    return false;
+    return (pActionsRecorder->GetStatus() == ActionsRecorder::disabled);
 }
 
 // Called once after isFinished returns true

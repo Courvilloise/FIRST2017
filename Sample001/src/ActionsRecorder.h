@@ -10,12 +10,14 @@
 #include <string>
 #include <list>
 #include <memory>
-
+#include "subsystems/Geargate.h"
 using namespace std;
 
 
 class ActionsRecorder;
 class Record;
+class Geargate;
+
 
 class Record
 {
@@ -32,20 +34,19 @@ public:
 
 	Record(long tick, unsigned int ID) : updateCounter(tick), funcID(ID){}
 	Record(long tick, unsigned int ID, double val1, double val2) : updateCounter(tick), funcID(ID), double1(val1), double2(val2){}
-	~Record ()
-	{
-		cout << "Record::Destructor" << endl;
-	}
+	Record(long tick, unsigned int ID, Geargate::gatePosition pos) : updateCounter(tick), funcID(ID), gatePosition(pos){}
+	~Record (){}
 
 	unsigned long updateCounter;
 	unsigned int funcID;
 	double double1;
 	double double2;
+	Geargate::gatePosition gatePosition;
 };
 
 class ActionsRecorder {
 public:
-	enum recorderMode {recordInProgress, playInProgress, disabled};
+	enum recorderMode {recordInProgress, playInProgress, autonoumousInProgress, disabled};
 
 private:
 	// To block all new instance! It's a singleton
@@ -80,8 +81,11 @@ public:
 	void StopRecord();
 	void StartPlay();
 	void StopPlay();
+	void StartAutonoumous();
+	void StopAutonoumous();
 	void Clear();										// Clear all commands recorded;
 	void Update();
+	void AutonoumousUpdate();
 	long GetUpdateCounter(){return updateCounter;}
 	recorderMode GetStatus(){return recorderStatus;}	// Get current status
 
@@ -94,6 +98,7 @@ public:
 	// Used to record calls
 	void RecordCommand(unsigned int funcID);
 	void RecordCommand(unsigned int funcID, double val1, double val2);
+	void RecordCommand(unsigned int funcID, Geargate::gatePosition pos);
 };
 
 #endif /* SRC_ACTIONSRECORDER_H_ */

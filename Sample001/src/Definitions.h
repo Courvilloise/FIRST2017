@@ -67,16 +67,18 @@
 /////////////////////////////////////////////////////////////////////////////////
 // ANOUT THE WINCH
 #define WINCH_DIRECTION							(THUMBSTICK_RIGHT_VERTICAL)
-#define WINCH_BREAK								(BOUTON_CARRE)
+#define WINCH_BREAK								(BOUTON_R1)
 
 /////////////////////////////////////////////////////////////////////////////////
 // ABOUT THE RECORDER
 #define RECORDER_START_STOP_RECORD				(BOUTON_OPTION)
 #define RECORDER_START_STOP_PLAY				(BOUTON_PLAYSTATION)
+#define RECORDER_FILE_NAME						("/home/lvuser/autonmous.bin")
 
 #define FUNC_VEHICLE_MOVE						(1)
 #define FUNC_VEHICLE_STOP						(2)
 #define FUNC_CATAPULT_SETROTATIONSPEED			(3)
 #define FUNC_CATAPULT_STOP						(4)
+#define FUNC_GEARGATE_SETGATEPOSITION			(5)
 
 #endif /* SRC_DEFINITIONS_H_ */

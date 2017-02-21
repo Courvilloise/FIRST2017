@@ -30,6 +30,9 @@ Catapult::Catapult() : Subsystem("Catapult") {
 	savedSpeed = 0.0f;
 	valueSaved = false;
 
+	// Stop the recorder
+	ActionsRecorder::GetInstance()->StopRecord();
+
 	//pCAN1ThrowEngine->SetControlMode(CANTalon::kDisabled);
 	Stop();
 }
@@ -55,15 +58,16 @@ void Catapult::SetRotationSpeed(double ballSpeed, double agitatorSpeed)
 	cAN1ThrowEngine->Set(ballSpeed);
 
 	// If we have enough speed, we should start the agitator;
-	if (std::abs(currentBallSpeed) > 0.01)
+	if (std::abs(ballSpeed) > 0.01f)
 	{
 		pMW4AgitatorEngine->Set(agitatorSpeed);
 	}
 	else
 	{
-		pMW4AgitatorEngine->Set(0.0);
+		pMW4AgitatorEngine->Set(0.0f);
 	}
 
+	// We will record a new command only if the speeds changes
 	if ((currentBallSpeed != ballSpeed) ||
 	    (currentAgitatorSpeed != agitatorSpeed))
 	{
@@ -83,17 +87,13 @@ void Catapult::IncreaseSpeed(double delta)
 // Completely stop the motor that throw balls
 void Catapult::Stop()
 {
-	cAN1ThrowEngine->Set(0.0);
-	pMW4AgitatorEngine->Set(0.0);
+	currentBallSpeed = 0.0f;
+	currentAgitatorSpeed = 0.0f;
 
-	if ((currentBallSpeed != 0.0) ||
-		(currentAgitatorSpeed != 0.0))
-	{
-		currentBallSpeed = 0.0;
-		currentAgitatorSpeed = 0.0;
+	cAN1ThrowEngine->Set(currentBallSpeed);
+	pMW4AgitatorEngine->Set(currentAgitatorSpeed);
 
-		ActionsRecorder::GetInstance()->RecordCommand(FUNC_CATAPULT_STOP, currentBallSpeed, currentAgitatorSpeed);
-	}
+	ActionsRecorder::GetInstance()->RecordCommand(FUNC_CATAPULT_STOP, currentBallSpeed, currentAgitatorSpeed);
 }
 
 // Save the current speed
@@ -108,7 +108,7 @@ void Catapult::SaveCurrentSpeed()
 void Catapult::RestoreSavedSpeed(double defaultSpeed)
 {
 	// If no previous value saved, we will apply the default speed
-	if (!valueSaved)
+	if (!valueSaved || (savedSpeed == 0.0f))
 	{
 		SetRotationSpeed(defaultSpeed);
 		return;

@@ -13,18 +13,16 @@ ActionsRecorder::~ActionsRecorder() {
 	Clear();
 }
 
-
-
 void ActionsRecorder::Clear()
 {
 	recordList.clear();
-	updateCounter = 0;
 }
 
 // Record a sequence
 void ActionsRecorder::StartRecord()
 {
 	Clear();
+	updateCounter = 0;
 	recorderStatus = ActionsRecorder::recordInProgress;
 }
 
@@ -46,6 +44,18 @@ void ActionsRecorder::StopPlay()
 	recorderStatus = ActionsRecorder::disabled;
 }
 
+void ActionsRecorder::StartAutonoumous()
+{
+	updateCounter = 0;
+	itList = recordList.begin();
+	recorderStatus = ActionsRecorder::autonoumousInProgress;
+}
+
+void ActionsRecorder::StopAutonoumous()
+{
+	recorderStatus = ActionsRecorder::disabled;
+}
+
 bool ActionsRecorder::SaveFile(const char* fileName)
 {
 	// Cannot save a file while recording or playing
@@ -60,7 +70,6 @@ bool ActionsRecorder::SaveFile(const char* fileName)
 	}
 
 	int recordNumber = (int) recordList.size();
-	cout << "number of record = " << recordNumber << endl;
 
 	// Save the number of record
 	file.write((char*) &recordNumber, sizeof(int));
@@ -68,13 +77,10 @@ bool ActionsRecorder::SaveFile(const char* fileName)
 	for (std::list<std::shared_ptr<Record>>::iterator it = recordList.begin(); it!=recordList.end(); ++it)
 	{
 		file.write((char*) (*it).get(), sizeof(Record));
-//		file << (*it)->tickCounter;
-//		file << (*it)->funcID;
-//		file << (*it)->double1;
-//		file << (*it)->double2;
 	}
 
 	file.close();
+	cout << "File Saved successfully! Number of record = " << recordNumber << endl;
 	return true;
 }
 
@@ -105,35 +111,28 @@ bool ActionsRecorder::LoadFile(const char* fileName)
 	for (int it=0; it<numberOfRecord; it++)
 	{
 		file.read((char*) &tmpRecord, sizeof(Record));
-//		file >> tmpRecord.tickCounter;
-//		file >> tmpRecord.funcID;
-//		file >> tmpRecord.double1;
-//		file >> tmpRecord.double2;
-
-		//file.read((char*) &tmpRecord, sizeof(tmpRecord));
 
 		std::shared_ptr<Record> pRecord(new Record(tmpRecord));
 		recordList.push_back(pRecord);
 	}
 
 	file.close();
+	cout << "File Loaded successfully! Number of record = " << numberOfRecord << endl;
 	return true;
 
 }
 
 Record* ActionsRecorder::GetCurrentAction()
 {
-	cout << "Size = " << recordList.size();
-
 	if (itList == recordList.end())
-		return NULL;
+		return nullptr;
 
 	return (*itList).get();
 }
 
 void ActionsRecorder::IterateNextAction()
 {
-	itList++;
+	++itList;
 }
 
 // Record a command without parameters
@@ -145,35 +144,42 @@ void ActionsRecorder::RecordCommand(unsigned int funcID)
 
 	std::shared_ptr<Record> pRecord(new Record(updateCounter, funcID));
 	recordList.push_back(pRecord);
-
-	//size_type big = recordList.size();
-	cout << "Size = " << recordList.size() << "\n";
 }
 
 // Record a command with parameters
 void ActionsRecorder::RecordCommand(unsigned int funcID, double val1, double val2)
 {
 	// If we don't record it's not necessary to save the information
-	if (!recorderStatus!=recordInProgress)
+	if (recorderStatus!=recordInProgress)
 		return;
 
 	std::shared_ptr<Record> pRecord(new Record(updateCounter, funcID, val1, val2));
 	recordList.push_back(pRecord);
 }
 
-// Update the recorder
-void ActionsRecorder::Update()
+void ActionsRecorder::RecordCommand(unsigned int funcID, Geargate::gatePosition pos)
 {
-	// nothing to do if we don't record or don't play
-	if (recorderStatus == disabled)
+	// If we don't record it's not necessary to save the information
+	if (recorderStatus!=recordInProgress)
 		return;
 
-	// If we are recording we only increase the update counter
-	if (recorderStatus == recordInProgress)
-	{
-		updateCounter++;
+	std::shared_ptr<Record> pRecord(new Record(updateCounter, funcID, pos));
+	recordList.push_back(pRecord);
+
+}
+
+// Update the recorder! This function will be called by the gamepad even in the autonmous mode
+// We need more more time to refactor...
+void ActionsRecorder::Update()
+{
+	// If we are in autonoumous mode we cannot update by this function!
+	if (recorderStatus == ActionsRecorder::autonoumousInProgress)
 		return;
-	}
+
+	updateCounter++;
+
+	if (recorderStatus != playInProgress)
+		return;
 
 	/////////////////////////////////////////////////////
 	// Playing mode...
@@ -186,7 +192,9 @@ void ActionsRecorder::Update()
 		return;
 	}
 
-	// If we have an action to play and in synchro with the current updateCounter
+	//printf("pRecord->updateCounter = %u, updateCounter = %u\n", (unsigned int) pRecord->updateCounter, (unsigned int) updateCounter );
+
+	// If we have an action to play and it's synchro with the current updateCounter
 	while ((pRecord != nullptr) &&
 		   (pRecord->updateCounter == updateCounter))
 	{
@@ -196,8 +204,39 @@ void ActionsRecorder::Update()
 		IterateNextAction();
 		pRecord = GetCurrentAction();
 	}
+}
+
+void ActionsRecorder::AutonoumousUpdate()
+{
+	// We need to be in the autonoumous mode
+	if (recorderStatus != ActionsRecorder::autonoumousInProgress)
+		return;
 
 	updateCounter++;
+
+	/////////////////////////////////////////////////////
+	// Playing mode...
+	Record* pRecord = GetCurrentAction();
+
+	// If the list of records is empty (there is nothing to play)
+	if (pRecord == nullptr)
+	{
+		StopAutonoumous();
+		return;
+	}
+
+	//printf("pRecord->updateCounter = %u, updateCounter = %u\n", (unsigned int) pRecord->updateCounter, (unsigned int) updateCounter );
+
+	// If we have an action to play and it's synchro with the current autonoumousUpdateCounter
+	while ((pRecord != nullptr) &&
+		   (pRecord->updateCounter == updateCounter))
+	{
+		PlaySpecificRecord(pRecord);
+
+		// We are looking for the next action
+		IterateNextAction();
+		pRecord = GetCurrentAction();
+	}
 }
 
 void ActionsRecorder::PlaySpecificRecord(const Record* pRecord)
@@ -224,6 +263,9 @@ void ActionsRecorder::PlaySpecificRecord(const Record* pRecord)
 		(Robot::catapult.get())->Stop();
 		break;
 
+	case FUNC_GEARGATE_SETGATEPOSITION:
+		(Robot::geargate.get())->SetGatePosition(pRecord->gatePosition);
+		break;
 	}
 
 }

@@ -213,7 +213,7 @@ Children:
           validators: *id003
           value: '4'
       Base: Speed Controller
-      Name: PMW7GateEngine
+      Name: PMW4GateEngine
     Properties:
       Default command parameters: !!robotbuilder.data.properties.ParametersProperty
         default: []
