@@ -154,6 +154,8 @@ void ActionsRecorder::RecordCommand(unsigned int funcID, double val1, double val
 		return;
 
 	std::shared_ptr<Record> pRecord(new Record(updateCounter, funcID, val1, val2));
+
+	//printf("RecordCommand val1=%f, val2=%f\n", pRecord->double1, pRecord->double2);
 	recordList.push_back(pRecord);
 }
 

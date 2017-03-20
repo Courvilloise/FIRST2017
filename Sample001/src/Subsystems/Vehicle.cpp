@@ -76,6 +76,17 @@ void Vehicle::Move(double leftSpeed, double rightSpeed)
 	if (rightSpeed < -1.0f)
 		rightSpeed = -1.0f;
 
+	// Will record the new values of the speeds if different than previous values..
+	if ((leftSpeed != currentLeftSpeed) ||
+	    (rightSpeed != currentRightSpeed))
+	{
+		currentLeftSpeed = leftSpeed;
+		currentRightSpeed = rightSpeed;
+
+		ActionsRecorder::GetInstance()->RecordCommand(FUNC_VEHICLE_MOVE, leftSpeed, rightSpeed);
+	}
+
+
 	// The right engines rotates in the opposite side of the left engines
 	rightSpeed = rightSpeed * -1.0f;
 
@@ -87,15 +98,7 @@ void Vehicle::Move(double leftSpeed, double rightSpeed)
 	pMW1RightEngine->Set(rightSpeed);
 	pMW3RightEngine->Set(rightSpeed);
 
-	// Will record the new values of the speeds if different than previous values..
-	if ((leftSpeed != currentLeftSpeed) ||
-	    (rightSpeed != currentRightSpeed))
-	{
-		currentLeftSpeed = leftSpeed;
-		currentRightSpeed = rightSpeed;
-
-		ActionsRecorder::GetInstance()->RecordCommand(FUNC_VEHICLE_MOVE, -1.0f * currentLeftSpeed, -1.0f * currentRightSpeed);
-	}
+	//printf("leftSpeed = %f, rightSpeed = %f\n", leftSpeed, rightSpeed);
 }
 
 
