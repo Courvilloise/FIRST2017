@@ -25,14 +25,24 @@ GamePadDrive::GamePadDrive(): Command() {
 
 // Called just before this Command runs the first time
 void GamePadDrive::Initialize() {
+
+	// By default there is no button pressed
 	btnTooggleRecordPressed = false;
 	btnTooglePlayPressed = false;
 	btnToggleGatePressed = false;
 	btnToggleWinchBreakPressed = false;
 	btnToggleStopCatapult = false;
+	btnToggleInvertDriveControl = false;
+
+	// By default we don't invert the control
+	invertDriverControlCoef = 1.0f;
+	printf("Commands to drive the robot are not inverted\n");
+	SmartDashboard::PutString("DB/String 0", "CTRL NORMAL");
 
 	pActionsRecorder = ActionsRecorder::GetInstance();
 	pJoystick = Robot::oi->getJoystick();
+	SmartDashboard::PutString("DB/String 1", "RECORD OFF");
+
 
 	// We start with an open gate
 	posGearGate = Geargate::closeGate;
@@ -82,7 +92,6 @@ void GamePadDrive::End()
 // subsystems is scheduled to run
 void GamePadDrive::Interrupted()
 {
-
 }
 
 // Update the vehicle based on the gamepad command
@@ -94,16 +103,39 @@ void GamePadDrive::UpdateVehicle()
 	double leftSpeedCoef = 1.0f;
 	double rightSpeedCoef = 1.0f;
 
+	// To inverse we should invert the control to drive (used when we drive backward)
+	if (pJoystick->GetRawButton(VEHICLE_INVERT_CONTROL) && !btnToggleInvertDriveControl)
+	{
+		// We invert the control
+		invertDriverControlCoef *= -1.0f;
+		btnToggleInvertDriveControl = true;
+
+		if (invertDriverControlCoef <= 0.0f)
+		{
+			printf("Commands to drive the robot are inverted\n");
+			SmartDashboard::PutString("DB/String 0", "CTRL INVERTED");
+		}
+		else
+		{
+			printf("Commands to drive the robot are not inverted\n");
+			SmartDashboard::PutString("DB/String 0", "CTRL NORMAL");
+		}
+	}
+	else if (!pJoystick->GetRawButton(VEHICLE_INVERT_CONTROL) && btnToggleInvertDriveControl)
+	{
+		btnToggleInvertDriveControl = false;
+	}
+
 	// Get the forward speed (0-1.0)
 	// We have to convert a Raw Axis between -1 (not pressed) and +1 to an speed between 0 and 1.0
-	double forwadSpeed = (pJoystick->GetRawAxis(VEHICLE_GACHETTE_FORWARD) + 1.0f) / 2.0f;
+	double forwardSpeed = (pJoystick->GetRawAxis(VEHICLE_GACHETTE_FORWARD) + 1.0f) / 2.0f;
 
 	// Get the reverse speed (0-1.0)
 	// We have to convert a Raw Axis between -1 (not pressed) and +1 to an speed between 0 and 1.0
 	double reverseSpeed = (pJoystick->GetRawAxis(VEHICLE_GACHETTE_REVERSE) + 1.0f) / 2.0f;
 
 	// Real speed (the player can press forward and reverse in the same time to speed-up the transition)
-	double realSpeed = forwadSpeed - reverseSpeed;
+	double realSpeed = forwardSpeed - reverseSpeed;
 
 	// Get the direction of the wheel (between -1.0 (full left) to +1.0 (full right))
 	double direction = pJoystick->GetRawAxis(VEHICLE_DIRECTION);
@@ -116,15 +148,24 @@ void GamePadDrive::UpdateVehicle()
 		rightSpeedCoef = (direction > 0.0f ? 1.0f - direction : rightSpeedCoef);
 
 		// Apply the speed on the vehicle
-		(Robot::vehicle.get())->Move(realSpeed * leftSpeedCoef, realSpeed * rightSpeedCoef);
+		(Robot::vehicle.get())->Move(realSpeed * leftSpeedCoef * invertDriverControlCoef,
+				realSpeed * rightSpeedCoef * invertDriverControlCoef);
 	}
 	// If the user wants to turn its vehicle on itself (autorotation)
 	else if (std::abs(direction) > VEHICLE_MINIMUM_ANGLE_FOR_AUTORATION)
 	{
 		// As a linear interpolation triggers a very fast auto-rotation, we use a square approach
 		double autorotationSpeed = direction * direction;
+
+		// we keep a negative rotation speed if it was negative before the square calculation
+		if (direction < 0.0f)
+		{
+			autorotationSpeed *= -1.0f;
+		}
+
 		// Apply the speed on the vehicle
-		(Robot::vehicle.get())->Move(autorotationSpeed, -1.0f * autorotationSpeed);
+		(Robot::vehicle.get())->Move(autorotationSpeed * invertDriverControlCoef,
+				-1.0f * autorotationSpeed * invertDriverControlCoef);
 	}
 	else // If no turn, not move forward, we stop!
 	{
@@ -176,7 +217,6 @@ void GamePadDrive::UpdateWinch()
 	double direction = pJoystick->GetRawAxis(WINCH_DIRECTION);
 	(Robot::winch.get())->Move(direction);
 
-
 	if (!btnToggleWinchBreakPressed && pJoystick->GetRawButton(WINCH_BREAK))
 	{
 		(Robot::winch.get())->Break();
@@ -218,6 +258,7 @@ void GamePadDrive::UpdateRecorder()
 		if (pActionsRecorder->GetStatus()==ActionsRecorder::disabled)
 		{
 			printf("START A SEQUENCE RECORD\n");
+			SmartDashboard::PutString("DB/String 1", "RECORD ON");
 
 			pActionsRecorder->Clear();
 			pActionsRecorder->StartRecord();
@@ -225,6 +266,7 @@ void GamePadDrive::UpdateRecorder()
 		else if (pActionsRecorder->GetStatus()==ActionsRecorder::recordInProgress)
 		{
 			printf("STOP A SEQUENCE RECORD\n");
+			SmartDashboard::PutString("DB/String 1", "RECORDER OFF");
 
 			pActionsRecorder->StopRecord();
 			pActionsRecorder->SaveFile(RECORDER_FILE_NAME);
