@@ -55,6 +55,12 @@ private:
 	bool btnToggleWinchBreakPressed;		// Used to avoid multiple calls in a same action (button pressure)
 	bool btnToggleStopCatapult;				// Used to avoid multiple calls in a same action (button pressure)
 	bool btnToggleInvertDriveControl;		// Used to avoid multiple calls in a same action (button pressure)
+	bool btnTooggleCycleSlotPressed;		// Used to avoid multiple calls in a same action (button pressure)
+	bool btnTooggleSetAutonomousPressed;	// Used to avoid multiple calls in a same action (button pressure)
+	bool btnToggleAgitatorPressed;			// Used to avoid multiple calls in a same action (button pressure)
+	bool btnToggleAgitatorPanicPressed;			// Used to avoid multiple calls in a same action (button pressure)
+
+	int currentRecorderSlot;				// Id of the current recorder slot
 	double invertDriverControlCoef;			// Coef used to invert the driver command if necessary (i.e. we drive backward and like to have a forward feeling)
 
 	Geargate::gatePosition posGearGate; 	// Used to toggle the gear gate position

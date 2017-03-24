@@ -50,9 +50,10 @@
 #define CATAPULT_BUTTON_INCREASE_SPEED			(POV_HAUT)
 #define CATAPULT_BUTTON_DESCREASE_SPEED			(POV_BAS)
 #define CATAPULT_BUTTON_STOP_SPEED				(POV_GAUCHE)
+#define CATAPULT_BUTTON_AGITATOR_PANIC			(POV_DROIT)
 
 #define CATAPULT_AGITATOR_SPEED					(0.8f)
-#define CATAPULT_DEFAULT_START_SPEED			(0.85f)
+#define CATAPULT_DEFAULT_START_SPEED			(0.70f)
 #define CATAPULT_INCREASE_SPEED_DELTA			(0.01f)
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +75,20 @@
 // ABOUT THE RECORDER
 #define RECORDER_START_STOP_RECORD				(BOUTON_OPTION)
 #define RECORDER_START_STOP_PLAY				(BOUTON_PLAYSTATION)
-#define RECORDER_FILE_NAME						("/home/lvuser/autonmous.bin")
+#define RECORDER_AUTONOMOUS_FILE_NAME			("/home/lvuser/autonmous.bin")
+#define RECORDER_SLOT0_FILE_NAME				("/home/lvuser/slot0.bin")
+#define RECORDER_SLOT1_FILE_NAME				("/home/lvuser/slot1.bin")
+#define RECORDER_SLOT2_FILE_NAME				("/home/lvuser/slot2.bin")
+#define RECORDER_SLOT3_FILE_NAME				("/home/lvuser/slot3.bin")
+#define RECORDER_SLOT4_FILE_NAME				("/home/lvuser/slot4.bin")
+#define RECORDER_SLOT5_FILE_NAME				("/home/lvuser/slot5.bin")
+#define RECORDER_SLOT6_FILE_NAME				("/home/lvuser/slot6.bin")
+#define RECORDER_SLOT7_FILE_NAME				("/home/lvuser/slot7.bin")
+#define RECORDER_SLOT8_FILE_NAME				("/home/lvuser/slot8.bin")
+#define RECORDER_SLOT9_FILE_NAME				("/home/lvuser/slot9.bin")
+#define RECORDER_NUMBER_SLOTS					(10)
+#define RECORD_CYCLE_SLOT_BUTTON				(BOUTON_CARRE)
+#define RECORD_SET_AUTONOMOUS_BUTTON			(BOUTON_TRIANGLE)
 
 #define FUNC_VEHICLE_MOVE						(1)
 #define FUNC_VEHICLE_STOP						(2)

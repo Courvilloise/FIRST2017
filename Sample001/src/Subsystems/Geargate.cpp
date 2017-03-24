@@ -50,11 +50,14 @@ void Geargate::InitDefaultCommand() {
 // Start to open or close the gate
 void Geargate::SetGatePosition(gatePosition position)
 {
+	printf("void Geargate::SetGatePosition(gatePosition %d)\n", position);
+
 	// If we need to record this new command
 	if (position != currentPosition)
 	{
 		currentPosition = position;
 		ActionsRecorder::GetInstance()->RecordCommand(FUNC_GEARGATE_SETGATEPOSITION, position);
+		printf("ActionsRecorder::GetInstance()->RecordCommand(FUNC_GEARGATE_SETGATEPOSITION, position)\n");
 	}
 
 }

@@ -49,6 +49,8 @@ public:
 	void IncreaseSpeed(double delta);
 	// Completely stop the motor that throw balls
 	void Stop();
+	// Stop only the agitator
+	void StopAgitator();
 	// Save the current speed
 	void SaveCurrentSpeed();
 	// Restore the speed with the previous value.

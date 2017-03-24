@@ -30,6 +30,7 @@ public:
 		funcID = other.funcID;
 		double1 = other.double1;
 		double2 = other.double2;
+		gatePosition = other.gatePosition;
 	}
 
 	Record(long tick, unsigned int ID) : updateCounter(tick), funcID(ID){}

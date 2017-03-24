@@ -96,6 +96,13 @@ void Catapult::Stop()
 	ActionsRecorder::GetInstance()->RecordCommand(FUNC_CATAPULT_STOP, currentBallSpeed, currentAgitatorSpeed);
 }
 
+// Stop the motor of the agitator only
+void Catapult::StopAgitator()
+{
+	pMW4AgitatorEngine->Set(0.0f);
+}
+
+
 // Save the current speed
 void Catapult::SaveCurrentSpeed()
 {

@@ -27,7 +27,7 @@ void AutonomousCommand::Initialize() {
 
 	pActionsRecorder = ActionsRecorder::GetInstance();
 	pActionsRecorder->Clear();
-	pActionsRecorder->LoadFile(RECORDER_FILE_NAME);
+	pActionsRecorder->LoadFile(RECORDER_AUTONOMOUS_FILE_NAME);
 	pActionsRecorder->StartAutonoumous();
 }
 

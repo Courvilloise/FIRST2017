@@ -111,7 +111,6 @@ bool ActionsRecorder::LoadFile(const char* fileName)
 	for (int it=0; it<numberOfRecord; it++)
 	{
 		file.read((char*) &tmpRecord, sizeof(Record));
-
 		std::shared_ptr<Record> pRecord(new Record(tmpRecord));
 		recordList.push_back(pRecord);
 	}
@@ -166,6 +165,9 @@ void ActionsRecorder::RecordCommand(unsigned int funcID, Geargate::gatePosition 
 		return;
 
 	std::shared_ptr<Record> pRecord(new Record(updateCounter, funcID, pos));
+	printf("RecordCommand(unsigned int funcID, Geargate::gatePosition pos), %d, %d\n", funcID, pos);
+	printf("RecordCommand(unsigned int funcID, Geargate::gatePosition pos), %d, %d\n", funcID, pRecord->gatePosition);
+
 	recordList.push_back(pRecord);
 
 }
