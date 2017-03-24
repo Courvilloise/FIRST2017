@@ -48,8 +48,7 @@ void GamePadDrive::Initialize() {
 	pJoystick = Robot::oi->getJoystick();
 	SmartDashboard::PutString("DB/String 1", "RECORD OFF");
 
-	int val = system("cp /home/lvuser/gearbackup002.bin /home/lvuser/slot9.bin");
-	printf("cp done! return value = %d\n", val);
+//	int val = system("cp /home/lvuser/gearbackup002.bin /home/lvuser/slot9.bin");
 
 
 //	int val = system("cp /home/lvuser/autonmous.bin /home/lvuser/gearbackup002.bin");
@@ -58,6 +57,8 @@ void GamePadDrive::Initialize() {
 	// We start with an open gate
 	posGearGate = Geargate::closeGate;
 	(Robot::geargate.get())->SetGatePosition(posGearGate);
+	//test HERE Gate
+	SmartDashboard::PutString("DB/String 7", "Gate Closed");
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -158,9 +159,16 @@ void GamePadDrive::UpdateVehicle()
 	if (std::abs(realSpeed) > VEHICLE_AUTORATION_SPEED_THRESHOLD)
 	{
 		//We like to turn on left (we have to break the left side)
-		leftSpeedCoef = (direction < 0.0f ? 1.0f + direction : leftSpeedCoef);
-		rightSpeedCoef = (direction > 0.0f ? 1.0f - direction : rightSpeedCoef);
-
+		if (invertDriverControlCoef > 0.0f)
+		{
+			leftSpeedCoef = (direction < 0.0f ? 1.0f + direction : leftSpeedCoef);
+			rightSpeedCoef = (direction > 0.0f ? 1.0f - direction : rightSpeedCoef);
+		}
+		else
+		{
+			rightSpeedCoef = (direction < 0.0f ? 1.0f + direction : leftSpeedCoef);
+			leftSpeedCoef = (direction > 0.0f ? 1.0f - direction : rightSpeedCoef);
+		}
 		// Apply the speed on the vehicle
 		(Robot::vehicle.get())->Move(realSpeed * leftSpeedCoef,
 				realSpeed * rightSpeedCoef);
@@ -260,9 +268,15 @@ void GamePadDrive::UpdateGearGate()
 	if (!btnToggleGatePressed && pJoystick->GetRawButton(GEARGATE_BUTTON_TOGGLE))
 	{
 		if (posGearGate==Geargate::openGate)
+		{
 			posGearGate = Geargate::closeGate;
+			SmartDashboard::PutString("DB/String 7", "Gate Closed");
+		}
 		else
+		{
 			posGearGate = Geargate::openGate;
+			SmartDashboard::PutString("DB/String 7", "Gate Open");
+		}
 
 		//posGearGate = (posGearGate==Geargate::openGate ? Geargate::closeGate : Geargate::openGate);
 		(Robot::geargate.get())->SetGatePosition(posGearGate);
@@ -397,33 +411,53 @@ void GamePadDrive::UpdateRecorder()
 		{
 		case 0:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT0_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 0 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 0");
 			break;
 		case 1:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT1_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 1 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 1");
 			break;
 		case 2:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT2_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 2 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 2");
 			break;
 		case 3:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT3_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 3 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 3");
 			break;
 		case 4:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT4_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 4 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 4");
 			break;
 		case 5:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT5_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 5 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 5");
 			break;
 		case 6:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT6_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 6 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 6");
 			break;
 		case 7:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT7_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 7 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 7");
 			break;
 		case 8:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT8_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 8 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 8");
 			break;
 		case 9:
 			sprintf(cmd, "cp -fr %s %s", RECORDER_SLOT9_FILE_NAME, RECORDER_AUTONOMOUS_FILE_NAME);
+			printf("Slot 9 applied for autonmous mode\n");
+			SmartDashboard::PutString("DB/String 6", "AUTO = 9");
 			break;
 		default:
 			break;

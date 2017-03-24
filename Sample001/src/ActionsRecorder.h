@@ -18,6 +18,10 @@ class ActionsRecorder;
 class Record;
 class Geargate;
 
+//////////////////////////////////////////////////////////////////////
+//  BUG: IF A TRACK RECORDER IS LONGER THAN 15 SEC (THE AUTONMOUS MODE)
+// THE ROBOT WILL STAY JAMMED AND THE MANUAL MODE WILL NOT SWITCH!
+// YOU CAN USE THE "PRATICE"
 
 class Record
 {

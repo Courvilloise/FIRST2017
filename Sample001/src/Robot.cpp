@@ -48,7 +48,7 @@ void Robot::RobotInit() {
 
 	// Start the video stream for the FRC Driver Station
 	CameraServer::GetInstance()->StartAutomaticCapture(0);
-	CameraServer::GetInstance()->StartAutomaticCapture(1);
+	//CameraServer::GetInstance()->StartAutomaticCapture(1);
   }
 
 /**
