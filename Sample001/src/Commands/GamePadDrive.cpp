@@ -152,6 +152,14 @@ void GamePadDrive::UpdateVehicle()
 	// We invert de speed if the commands are inverted
 	realSpeed *= invertDriverControlCoef;
 
+	// Sensibilite
+	double newRealSpeed = realSpeed * realSpeed;
+	if (realSpeed < 0.0f)
+	{
+		newRealSpeed *= -1.0f;
+	}
+	realSpeed = newRealSpeed;
+
 	// Get the direction of the wheel (between -1.0 (full left) to +1.0 (full right))
 	double direction = pJoystick->GetRawAxis(VEHICLE_DIRECTION);
 
